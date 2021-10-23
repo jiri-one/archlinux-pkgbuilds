@@ -1,0 +1,37 @@
+# Maintainer: jiri.one <url/mail: http://jiri.one>
+
+pkgname=methane
+pkgver=2.0.1
+pkgrel=1
+pkgdesc="Help the Super Methane Brothers to capture baddies with your gas gun"
+arch=('i686' 'x86_64')
+url="http://methane.sourceforge.net"
+license=('GPL')
+depends=('clanlib')
+source=("https://github.com/rombust/Methane/archive/refs/tags/v$pkgver.tar.gz"
+        "$pkgname.png"
+        "$pkgname.desktop")
+sha256sums=('8a6df09f82d3b9404821adff2c2a13012e623abdd57591bf2503dd1e4ff3cac2'
+            '6c56b025b058a954bd089850dc50f4f25b292da97bbba0d4315db4060152f1fe'
+            'cdbd5cbe9af04eff5bd7b8a467bd39fdbdefb77a4728d09347ee09c64d947d17')
+
+build() {
+  cd Methane-$pkgver
+
+  # remove leftover build dir
+  rm -rf build
+  make
+}
+
+package() {
+  cd Methane-$pkgver
+
+  # install desktop entry
+  install -Dm644 ../$pkgname.desktop "$pkgdir"/usr/share/applications/$pkgname.desktop
+  install -Dm644 ../$pkgname.png "$pkgdir"/usr/share/pixmaps/$pkgname.png
+
+  # install data and executable
+  install -d "$pkgdir"/usr/share/$pkgname
+  cp -r {resources,docs} "$pkgdir"/usr/share/$pkgname
+  install -Dm755 $pkgname "$pkgdir"/usr/bin/$pkgname
+}
